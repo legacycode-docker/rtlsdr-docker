@@ -41,14 +41,6 @@ jobs:
 
 workflows: 
   version: 2
-  tagged: 
-    jobs: 
-      - build: 
-          filters: 
-            branches: 
-              ignore: /.*/
-            tags: 
-              only: /^v.*/
   untagged: 
     jobs: 
       - build
