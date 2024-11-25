@@ -1,61 +1,76 @@
-# RTLSDR Docker image
+# RTLSDR Docker Image
 
-## Supported tags and architectures
+## Supported Tags and Architectures
 
-This rtlsdr images supports following tags for e.g. Linux, Raspberry, Pine64 etc.:
+This RTLSDR image supports the following tags for various platforms, such as Linux, Raspberry Pi, Pine64, etc.:
 
--   [`latest`](https://github.com/legacycode/rtlsdr-docker/blob/latest/Dockerfile) [`0.6-1`](https://github.com/legacycode/rtlsdr-docker/blob/0.6-1/Dockerfile) - stable rtlsdr builds
+- [`latest`](https://github.com/legacycode/rtlsdr-docker/blob/latest/Dockerfile) 
 
-This images supports following architectures:
+This image supports the following architectures:
 
--   `amd64` - for most desktop processors
--   `arm7v` - for 32-Bit ARM images like Raspbian (Raspberry 1, 2, 3 and 4)
--   `arm64` - for 64-Bit ARM images like armbian (Pine 64, etc.)
--   `386` - for legacy desktop processors
+- `amd64` - For most desktop processors
+- `armv7` - For 32-bit ARM images (e.g., Raspbian on Raspberry Pi 1, 2, 3, and 4)
+- `arm64` - For 64-bit ARM images (e.g., Armbian on Pine64, etc.)
+- `386` - For legacy desktop processors
 
-## Tools included
+## Tools Included
 
-This Docker image contains a build of rtlsdr. Following programs are included in this image:
+This Docker image contains a build of RTLSDR. The following programs are included:
 
--   rtl_eeprom
--   rtl_fm
--   rtl_power
--   rtl_sdr
--   rtl_tcp
--   rtl_test
+- `rtl_adsb`
+- `rtl_biast`
+- `rtl_eeprom`
+- `rtl_fm`
+- `rtl_power`
+- `rtl_sdr`
+- `rtl_tcp`
+- `rtl_test`
 
 ## Examples
 
-You can run any rtlsdr command on your Docker host. To run the container in interactive mode use following command:
+You can run any RTLSDR command on your Docker host. To run the container in interactive mode, use the following command:
 
 ```shell
 docker run -it --network host --device [YOUR_DVBT_DEVICE] rtl_tcp -a [YOUR_HOST_IP] -p [YOUR_HOST_PORT]
 ```
 
-If your Docker host is running on ip address 192.168.0.1 and you want to use tcp port 1234 with your DVB-T stick on /dev/bus/usb/003/002 use the following command:
+If your Docker host is running on the IP address `192.168.0.1` and you want to use TCP port `1234` with your DVB-T stick at `/dev/bus/usb`, use the following command:
 
 ```shell
-docker run -it --network host --device /dev/bus/usb/003/002 legacycode/rtlsdr rtl_tcp -a 192.168.0.1 -p 1234
+docker run -it --network host --device /dev/bus/usb legacycode/rtlsdr rtl_tcp -a 192.168.0.1 -p 1234
 ```
 
-Use SDRSharp and connect to your Docker rtl_tcp server with ip 192.168.0.1 and port 1234.
+To listen on all interfaces (which allows connections from other machines), you can use `-a 0.0.0.0` in your command:
+
+```shell
+docker run -it --network host --device /dev/bus/usb legacycode/rtlsdr rtl_tcp -a 0.0.0.0 -p 1234
+```
+
+Docker Compose:
+
+```shell
+version: '3.8'  # Specify the version of Docker Compose
+
+services:
+  rtlsdr:
+    image: legacycode/rtlsdr  # The Docker image to use
+    command: rtl_tcp -a 0.0.0.0 -p 1234  # The command to run inside the container
+    network_mode: host  # Use the host network
+    devices:
+      - /dev/bus/usb  # Mount the USB device
+    restart: unless-stopped  # Restart policy
+```
+
+After executing this command, use SDR# (SDRSharp) to connect to your Docker RTL_TCP server at IP `192.168.0.1` (or any reachable IP) and port `1234`.
 
 ## Contribute
 
-Feel free to contribute! You can find this project on [GitHub][1]]!
+Feel free to contribute! You can find this project on [GitHub](https://github.com/legacycode/rtlsdr-docker)!
 
-## License information
+## License Information
 
-This [Dockerfile][1] is provided under the [MIT License][2].
+This [Dockerfile](https://github.com/legacycode/rtlsdr-docker) is provided under the [MIT License](https://github.com/legacycode/rtlsdr-docker/blob/latest/LICENSE.md).
 
-License information about rtlsdr can be found in the [official repository][3].
+License information about RTLSDR can be found in the [official repository](https://osmocom.org/projects/rtl-sdr/repository/revisions/master/entry/COPYING).
 
-The Docker images are based on the [Debian Docker image][4]. Refer to the official [Debian Docker image][4] page for license information.
-
-[1]: https://github.com/legacycode/rtlsdr-docker
-
-[2]: https://github.com/legacycode/rtlsdr-docker/blob/latest/LICENSE.md
-
-[3]: https://osmocom.org/projects/rtl-sdr/repository/revisions/master/entry/COPYING
-
-[4]: https://hub.docker.com/_/Debian
+The Docker images are based on the [Debian Docker image](https://hub.docker.com/_/Debian). Refer to the official [Debian Docker image](https://hub.docker.com/_/Debian) page for license information.

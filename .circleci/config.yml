@@ -4,20 +4,23 @@ jobs:
 
   build:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2404:2024.08.1
     steps:
       # install actual docker version
-      - run: sudo apt-get remove docker docker-engine docker.io containerd runc
       - run: sudo apt-get update
-      - run: sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-      - run: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-      - run: sudo apt-key fingerprint 0EBFCD88
-      - run: sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      - run: sudo apt-get install ca-certificates curl
+      - run: sudo install -m 0755 -d /etc/apt/keyrings
+      - run: sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+      - run: sudo chmod a+r /etc/apt/keyrings/docker.asc
+      - run: |
+              echo \
+                "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+                $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+                sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
       - run: sudo apt-get update
-      - run: sudo apt-get install docker-ce docker-ce-cli containerd.io
+      - run: sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
       # enable experimental docker features for buildx
-      - run: echo 'export DOCKER_CLI_EXPERIMENTAL=enabled' >> $BASH_ENV
       - run: docker info
 
       # register qemu and create multi-architecture build instance
@@ -27,7 +30,7 @@ jobs:
       - run: docker buildx inspect --bootstrap
       
       # build and push bintcoind
-      - checkout
+      - run: git clone -b "$CIRCLE_BRANCH" https://github.com/legacycode/rtlsdr-docker.git .
       - run: echo 'export DOCKER_TAG=${DOCKER_USERNAME}/rtlsdr:${CIRCLE_BRANCH}${CIRCLE_TAG}' >> $BASH_ENV
       - run: docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
       - run: |
