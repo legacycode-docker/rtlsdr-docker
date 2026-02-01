@@ -4,7 +4,7 @@
 
 This RTLSDR image supports the following tags for various platforms, such as Linux, Raspberry Pi, Pine64, etc.:
 
-- [`latest`](https://github.com/legacycode/rtlsdr-docker/blob/latest/Dockerfile) 
+- [`latest`](https://github.com/legacycode-docker/rtlsdr-docker/blob/latest/Dockerfile) 
 
 This image supports the following architectures:
 
@@ -31,7 +31,7 @@ This Docker image contains a build of RTLSDR. The following programs are include
 You can run any RTLSDR command on your Docker host. To run the container in interactive mode, use the following command:
 
 ```shell
-docker run -it --network host --device [YOUR_DVBT_DEVICE] rtl_tcp -a [YOUR_HOST_IP] -p [YOUR_HOST_PORT]
+docker run -it --network host --device [YOUR_DVBT_DEVICE] legacycode/rtlsdr rtl_tcp -a [YOUR_HOST_IP] -p [YOUR_HOST_PORT]
 ```
 
 If your Docker host is running on the IP address `192.168.0.1` and you want to use TCP port `1234` with your DVB-T stick at `/dev/bus/usb`, use the following command:
@@ -48,9 +48,7 @@ docker run -it --network host --device /dev/bus/usb legacycode/rtlsdr rtl_tcp -a
 
 Docker Compose:
 
-```shell
-version: '3.8'  # Specify the version of Docker Compose
-
+```yaml
 services:
   rtlsdr:
     image: legacycode/rtlsdr  # The Docker image to use
@@ -102,11 +100,11 @@ The Linux kernel automatically loads the `dvb_usb_rtl28xxu` driver (for DVB-T re
 
 ## Contribute
 
-Feel free to contribute! You can find this project on [GitHub](https://github.com/legacycode/rtlsdr-docker)!
+Feel free to contribute! You can find this project on [GitHub](https://github.com/legacycode-docker/rtlsdr-docker)!
 
 ## License Information
 
-This [Dockerfile](https://github.com/legacycode/rtlsdr-docker) is provided under the [MIT License](https://github.com/legacycode/rtlsdr-docker/blob/latest/LICENSE.md).
+This [Dockerfile](https://github.com/legacycode-docker/rtlsdr-docker) is provided under the [MIT License](https://github.com/legacycode-docker/rtlsdr-docker/blob/latest/LICENSE.md).
 
 License information about RTLSDR can be found in the [official repository](https://osmocom.org/projects/rtl-sdr/repository/revisions/master/entry/COPYING).
 
