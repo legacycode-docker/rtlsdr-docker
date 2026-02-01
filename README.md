@@ -63,6 +63,43 @@ services:
 
 After executing this command, use SDR# (SDRSharp) to connect to your Docker RTL_TCP server at IP `192.168.0.1` (or any reachable IP) and port `1234`.
 
+## Troubleshooting
+
+### "Kernel driver is active" Error
+
+If you see this error when running the container:
+
+```
+Kernel driver is active, or device is claimed by second instance of librtlsdr.
+In the first case, please either detach or blacklist the kernel module
+(dvb_usb_rtl28xxu), or enable automatic detaching at compile time.
+
+usb_claim_interface error -6
+Failed to open rtlsdr device #0.
+```
+
+The Linux kernel automatically loads the `dvb_usb_rtl28xxu` driver (for DVB-T reception) when it detects your RTL-SDR device. This driver claims the USB device before librtlsdr can access it.
+
+**Solution:** Blacklist the kernel driver on your **host system** (not inside the container).
+
+1. Create a blacklist file:
+
+   ```bash
+   sudo tee /etc/modprobe.d/blacklist-rtlsdr.conf <<EOF
+   blacklist dvb_usb_rtl28xxu
+   blacklist rtl2832
+   blacklist rtl2830
+   EOF
+   ```
+
+2. Unload the driver (or reboot):
+
+   ```bash
+   sudo rmmod dvb_usb_rtl28xxu
+   ```
+
+3. Run the container again.
+
 ## Contribute
 
 Feel free to contribute! You can find this project on [GitHub](https://github.com/legacycode/rtlsdr-docker)!
